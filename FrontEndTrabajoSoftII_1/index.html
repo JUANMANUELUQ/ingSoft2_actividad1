@@ -1,10 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Titulo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calificación de Libros</title>
+    <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
+<div class="container">
+    <h1>Califica y Reseña tu Libro Favorito</h1>
 
+    <!-- Información del libro -->
+    <div class="rating-container">
+        <div class="book-info">
+            <label for="book-title">Título del libro:</label>
+            <input type="text" id="book-title" placeholder="Introduce el nombre del libro">
+        </div>
+
+        <!-- Calificación del libro -->
+        <div class="rating">
+            <label for=>Calificación:</label>
+            <div class="stars">
+                <span class="star" data-value="1">&#9733;</span>
+                <span class="star" data-value="2">&#9733;</span>
+                <span class="star" data-value="3">&#9733;</span>
+                <span class="star" data-value="4">&#9733;</span>
+                <span class="star" data-value="5">&#9733;</span>
+            </div>
+        </div>
+
+        <!-- Reseña del libro -->
+        <div class="review">
+            <label for="review-text">Escribe una reseña:</label>
+            <textarea id="review-text" rows="5" placeholder="Escribe tu reseña aquí"></textarea>
+        </div>
+
+        <!-- Botón de envío -->
+        <button id="submit-btn">Enviar Calificación y Reseña</button>
+    </div>
+</div>
 </body>
 </html>
