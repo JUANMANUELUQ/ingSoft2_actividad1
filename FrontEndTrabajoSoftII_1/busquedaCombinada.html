@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>B&uacute;squeda combinada</title>
+    <style>
+        table {
+            float: left;
+            margin:100px;
+            border-collapse: collapse;
+        }
+        td, th {
+            border: 1px solid black; /* Añadir bordes para ver el efecto */
+            padding: 10px;
+        }
+        th {
+            background-color: #0a53be;
+        }
+        .tab {
+            background-color:gray;
+            font-size: 20px;
+            float: left;
+            cursor: pointer;
+            margin-left: 50px;
+            margin-top:  10px;
+            padding: 10px;
+            color:white;
+            border-radius: 10px;
+        }
+        .tab:hover {
+            background-color: deepskyblue;
+        }
+        input{
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        form {
+            background-color: #0a53be;
+            margin-top: 200px;
+            margin-left: 50px;
+            float:left;
+            width: 300px;
+            border-radius: 20px;
+            padding: 30px;
+        }
+        input[type="button"] {
+            background-color:gray;
+            color:white;
+            border:none;
+            cursor: pointer;
+        }
+        input[type="button"]:hover {
+            background-color:deepskyblue;
+        }
+
+    </style>
+    <script>
+        // Cargar archivo HTML mediante JavaScript y AJAX
+        fetch('toolbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('toolbar').innerHTML = data;
+            });
+    </script>
+</head>
+<body style="margin: 0;background-color:white;color:white ">
+<div id="toolbar"></div>
+<div style="padding-left:calc(50% - 400px);">
+    <form>
+        <div>
+            Autor:&nbsp;&nbsp;
+            <input type="text" name=""  placeholder="Autor a buscar">
+        </div>
+        <div>
+            T&iacute;tulo:&nbsp;&nbsp;
+            <input type="text" name="" placeholder="T&iacute;tulo a buscar">
+        </div>
+        <div>
+            ISBN:&nbsp;&nbsp;
+            <input type="text" name="" placeholder="ISBN a buscar">
+        </div>
+        <input type="button" name="Buscar" value="Buscar">
+    </form>
+    <table>
+        <tr>
+            <th>
+                T&iacute;tulo
+            </th>
+            <th>
+                Autor
+            </th>
+            <th>
+                ISBN
+            </th>
+            <th>
+                Acci&oacute;n
+            </th>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
