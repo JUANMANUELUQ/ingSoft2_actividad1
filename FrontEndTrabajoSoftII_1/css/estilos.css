@@ -35,6 +35,7 @@ h1 {
     gap: 20px;
 }
 
+.user-info label,
 .book-info label,
 .rating label,
 .review label {
@@ -42,6 +43,7 @@ h1 {
     margin-bottom: 5px;
 }
 
+.user-info input,
 .book-info input,
 .review textarea {
     width: 100%;
