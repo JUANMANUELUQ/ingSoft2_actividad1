@@ -14,133 +14,100 @@
             const stars = document.querySelectorAll('.star');
             stars.forEach(star => {
                 star.addEventListener('click', () => {
-                    selectedRating = star.getAttribute('data-value');
+                    const starValue = parseInt(star.getAttribute('data-value'));
+                    highlightStars(starValue);
+                });
+
+                // Resaltar estrellas al pasar el mouse
+                star.addEventListener('mouseover', () => {
+                    const hoverValue = parseInt(star.getAttribute('data-value'));
+                    highlightStars(hoverValue);
+                });
+
+                // Al salir del área de estrellas, volver al valor seleccionado
+                star.addEventListener('mouseout', () => {
                     highlightStars(selectedRating);
                 });
             });
 
             // Enviar la calificación y reseña
             document.getElementById('submit-btn').addEventListener('click', enviarReview);
+
+            // Poner el nombre del libro al cargar la página
+            ponerNombreLibro();
         });
 
         function ponerNombreLibro() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
-            if (id!=null) {
+            if (id != null) {
                 fetch(`http://localhost:8080/api/books/${encodeURIComponent(id)}`) // Cambia la URL si es necesario
                     .then(response => response.json())
                     .then(data => {
-
-                                document.getElementById("book-title").value=data.title;
-                                document.getElementById("book-title").disabled = true;
-
+                        document.getElementById("book-title").value = data.title;
+                        document.getElementById("book-title").disabled = true;
                     })
-                    .catch(error => console.error('Error fetching books:', error));
+                    .catch(error => console.error('Error fetching book:', error));
             }
-
-
         }
 
-        // Resaltar las estrellas hasta la seleccionada
-        function highlightStars(rating) {
+        // Función para resaltar estrellas en el sistema de calificación
+        function highlightStars(starCount) {
             const stars = document.querySelectorAll('.star');
+
+            // Limpiar todas las estrellas resaltadas
             stars.forEach(star => {
-                if (star.getAttribute('data-value') <= rating) {
-                    star.style.color = 'gold';
-                } else {
-                    star.style.color = 'black';
-                }
+                star.classList.remove('highlighted');
             });
+
+            // Resaltar las estrellas seleccionadas o el valor que se está pasando
+            for (let i = 0; i < starCount; i++) {
+                stars[i].classList.add('highlighted');
+            }
+
+            // Guardar la calificación seleccionada si es por clic
+            if (starCount > 0) {
+                selectedRating = starCount;
+            }
         }
 
         function enviarReview() {
             const value = new URLSearchParams(window.location.search);
-            const id = value.get('id');
-            const userName = document.getElementById("user-name").value;
-            const bookTitle = document.getElementById("book-title").value;
-            const reviewText = document.getElementById("review-text").value;
+            const id = value.get('id'); // Obtener el ID del libro de la URL
+            const userName = document.getElementById("user-name").value; // Obtener el nombre del usuario
+            const reviewText = document.getElementById("review-text").value; // Obtener el texto de la reseña
 
-            if (!userName || !bookTitle || !selectedRating || !reviewText) {
+            // Verificar que todos los campos estén completos
+            if (!userName || !selectedRating || !reviewText) {
                 alert("Por favor, completa todos los campos.");
                 return;
             }
 
-            let url = 'http://localhost:8080/api/add?';
-            const params = [];
+            const url = 'http://localhost:8080/api/reviews/add';
 
-                params.push(`bookId=${encodeURIComponent(id)}`);
-
-
-                params.push(`userId=${encodeURIComponent(userName)}`);
-
-
-                params.push(`rating=${encodeURIComponent(selectedRating)}`);
-            params.push(`reviewText=${encodeURIComponent(reviewText)}`);
-
-
-            // Unir los parámetros con "&"
-            url += params.join('&');
-            alert  (url)
-            // Realizar la solicitud POST al backend con los parámetros en la URL
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert("¡Reseña enviada exitosamente!");
-                        // Limpiar los campos del formulario
-                        document.getElementById("user-name").value = '';
-                        document.getElementById("book-title").value = '';
-                        document.getElementById("review-text").value = '';
-                        highlightStars(0);
-                    } else {
-                        alert("Hubo un error al enviar la reseña.");
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert("No se pudo enviar la reseña.");
-                });
-        }
-
-        // Función para enviar la reseña al backend
-        function enviarReviewANtigua() {
-            const userName = document.getElementById("user-name").value;
-            const bookTitle = document.getElementById("book-title").value;
-            const reviewText = document.getElementById("review-text").value;
-
-            if (!userName || !bookTitle || !selectedRating || !reviewText) {
-                alert("Por favor, completa todos los campos.");
-                return;
-            }
-
-            // Crear el objeto de reseña
-            const review = {
+            // Crear un objeto con los datos a enviar
+            const data = {
+                bookId: id,
                 userId: userName,
-                bookId: bookTitle, // En un caso real, deberías usar el ID real del libro
-                rating: parseInt(selectedRating),
+                rating: selectedRating,
                 reviewText: reviewText
             };
 
-            // Realizar la solicitud POST al backend
-            fetch('http://localhost:8080/api/reviews/add', {
+            // Enviar la solicitud POST con los datos en formato JSON
+            fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json', // Especificar el formato JSON
                 },
-                body: JSON.stringify(review)
+                body: JSON.stringify(data) // Convertir el objeto a una cadena JSON
             })
                 .then(response => {
                     if (response.ok) {
                         alert("¡Reseña enviada exitosamente!");
                         // Limpiar los campos del formulario
                         document.getElementById("user-name").value = '';
-                        document.getElementById("book-title").value = '';
                         document.getElementById("review-text").value = '';
-                        highlightStars(0);
+                        highlightStars(0); // Restablecer las estrellas de calificación
                     } else {
                         alert("Hubo un error al enviar la reseña.");
                     }
@@ -152,7 +119,7 @@
         }
     </script>
 </head>
-<body onload="ponerNombreLibro()">
+<body>
 <div class="container">
     <h1>Califica y Reseña tu Libro Favorito</h1>
 
@@ -167,7 +134,7 @@
         <!-- Información del libro -->
         <div class="book-info">
             <label for="book-title">Título del libro:</label>
-            <input type="text" id="book-title" placeholder="Introduce el nombre del libro">
+            <input type="text" id="book-title" placeholder="Introduce el nombre del libro" disabled>
         </div>
 
         <!-- Calificación del libro -->
