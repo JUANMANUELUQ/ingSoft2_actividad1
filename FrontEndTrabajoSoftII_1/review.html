@@ -16,6 +16,7 @@
                 star.addEventListener('click', () => {
                     const starValue = parseInt(star.getAttribute('data-value'));
                     highlightStars(starValue);
+                    selectedRating = starValue;
                 });
 
                 // Resaltar estrellas al pasar el mouse
@@ -41,8 +42,8 @@
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
             if (id != null) {
-                fetch(`http://localhost:8080/api/books/${encodeURIComponent(id)}`) // Cambia la URL si es necesario
-                    .then(response => response.json())
+                fetch('http://localhost:8080/api/books/${encodeURIComponent(id)}') // Cambia la URL si es necesario
+            .then(response => response.json())
                     .then(data => {
                         document.getElementById("book-title").value = data.title;
                         document.getElementById("book-title").disabled = true;
@@ -54,21 +55,9 @@
         // Función para resaltar estrellas en el sistema de calificación
         function highlightStars(starCount) {
             const stars = document.querySelectorAll('.star');
-
-            // Limpiar todas las estrellas resaltadas
-            stars.forEach(star => {
-                star.classList.remove('highlighted');
+            stars.forEach((star, index) => {
+                star.classList.toggle('active', index < starCount);  // Pinta estrellas hasta la seleccionada
             });
-
-            // Resaltar las estrellas seleccionadas o el valor que se está pasando
-            for (let i = 0; i < starCount; i++) {
-                stars[i].classList.add('highlighted');
-            }
-
-            // Guardar la calificación seleccionada si es por clic
-            if (starCount > 0) {
-                selectedRating = starCount;
-            }
         }
 
         function enviarReview() {

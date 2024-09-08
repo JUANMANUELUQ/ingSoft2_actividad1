@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Búsqueda combinada</title>
     <link rel="stylesheet" href="css/estiloBusquedas.css">
     <script>
-        // Cargar archivo HTML mediante JavaScript y AJAX (para incluir la toolbar)
-
         fetch('toolbar.html')
             .then(response => response.text())
             .then(data => {
@@ -15,17 +13,15 @@
             });
 
         function getAllBooks() {
-            fetch('http://localhost:8080/api/books') // Cambia la URL si es necesario
+            fetch('http://localhost:8080/api/books')
                 .then(response => response.json())
                 .then(data => {
-                    const tableBody = document.getElementById("resultados"); // ID del tbody en la tabla
-                    tableBody.innerHTML = ""; // Limpiar la tabla antes de agregar nuevos elementos
+                    const tableBody = document.getElementById("resultados");
+                    tableBody.innerHTML = "";
 
                     data.forEach(book => {
-                        // Crear una nueva fila (tr)
                         const row = document.createElement("tr");
 
-                        // Crear celdas (td) y agregarles los datos del libro
                         const titleCell = document.createElement("td");
                         titleCell.textContent = book.title;
 
@@ -37,25 +33,21 @@
 
                         const ratingCell = document.createElement("td");
                         const reviewLink = document.createElement("a");
-                        reviewLink.href = `/ingSoft2_actividad1/FrontEndTrabajoSoftII_1/review.html?id=${book.id}`; // URL de destino con book.id como parámetro
+                        reviewLink.href = `/review.html?id=${book.id}`;
                         reviewLink.textContent = "Reseñar";
-                        reviewLink.title = "Reseñar este libro"; // Opcional: tooltip para el enlace
                         ratingCell.appendChild(reviewLink);
 
-                        // Agregar las celdas a la fila
                         row.appendChild(titleCell);
                         row.appendChild(authorCell);
                         row.appendChild(isbnCell);
                         row.appendChild(ratingCell);
 
-                        // Agregar la fila al cuerpo de la tabla
                         tableBody.appendChild(row);
                     });
                 })
                 .catch(error => console.error('Error fetching books:', error));
         }
 
-        // Función para buscar libros combinados (por autor, título e ISBN)
         function buscarLibroCombinado() {
             const autor = document.getElementById("autor").value || '';
             const titulo = document.getElementById("titulo").value || '';
@@ -66,7 +58,6 @@
                 return;
             }
 
-            // Construir URL solo con los parámetros que no están vacíos
             let url = 'http://localhost:8080/api/books/search/advanced?';
             const params = [];
 
@@ -80,25 +71,18 @@
                 params.push(`isbn=${encodeURIComponent(isbn)}`);
             }
 
-            // Unir los parámetros con "&"
             url += params.join('&');
 
             fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Error en la solicitud: ${response.status}`);
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     let resultados = document.getElementById("resultados");
-                    resultados.innerHTML = ''; // Limpiar resultados anteriores
+                    resultados.innerHTML = '';
                     const tableBody = document.getElementById("resultados");
                     if (Array.isArray(data)) {
                         data.forEach(book => {
                             const row = document.createElement("tr");
 
-                            // Crear celdas (td) y agregarles los datos del libro
                             const titleCell = document.createElement("td");
                             titleCell.textContent = book.title;
 
@@ -110,61 +94,50 @@
 
                             const ratingCell = document.createElement("td");
                             const reviewLink = document.createElement("a");
-                            reviewLink.href = `/ingSoft2_actividad1/FrontEndTrabajoSoftII_1/review.html?id=${book.id}`; // URL de destino con book.id como parámetro
+                            reviewLink.href = `/review.html?id=${book.id}`;
                             reviewLink.textContent = "Reseñar";
-                            reviewLink.title = "Reseñar este libro"; // Opcional: tooltip para el enlace
                             ratingCell.appendChild(reviewLink);
 
-                            // Agregar las celdas a la fila
                             row.appendChild(titleCell);
                             row.appendChild(authorCell);
                             row.appendChild(isbnCell);
                             row.appendChild(ratingCell);
 
-                            // Agregar la fila al cuerpo de la tabla
                             tableBody.appendChild(row);
                         });
-
                     } else {
                         console.log('Error: la respuesta no es una lista.');
                     }
                 })
-                .catch(error => {
-                    console.log('Error en la búsqueda combinada:', error);
-                });
-        }
-
-        // Función para mostrar detalles de un libro (se puede implementar más adelante)
-        function verDetalles(bookId) {
-            alert("Detalles del libro con ID: " + bookId);
+                .catch(error => console.log('Error en la búsqueda combinada:', error));
         }
     </script>
 </head>
-<body style="margin: 0; background-color: white; color: black;">
+<body style="margin: 0;">
 <div id="toolbar"></div>
 
-<div style="padding-left: calc(50% - 400px);">
+<div class="container">
     <h1>Búsqueda Combinada de Libros</h1>
 
     <!-- Formulario de búsqueda -->
     <form onsubmit="event.preventDefault(); buscarLibroCombinado();">
         <div>
-            Autor:&nbsp;&nbsp;
+            <label for="autor">Autor:</label>
             <input type="text" id="autor" placeholder="Autor a buscar">
         </div>
         <div>
-            Título:&nbsp;&nbsp;
+            <label for="titulo">Título:</label>
             <input type="text" id="titulo" placeholder="Título a buscar">
         </div>
         <div>
-            ISBN:&nbsp;&nbsp;
+            <label for="isbn">ISBN:</label>
             <input type="text" id="isbn" placeholder="ISBN a buscar">
         </div>
         <input type="submit" value="Buscar">
     </form>
 
     <!-- Tabla de resultados -->
-    <table border="1" style="width: 100%; margin-top: 20px;">
+    <table>
         <thead>
         <tr>
             <th>Título</th>
@@ -174,10 +147,8 @@
         </tr>
         </thead>
         <tbody id="resultados">
-        <!-- Los resultados de búsqueda aparecerán aquí -->
         </tbody>
     </table>
 </div>
-
 </body>
 </html>

@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Búsqueda simple</title>
-    <link rel="stylesheet" href="css/estiloBusquedas.css">
+    <title>Búsqueda Simple</title>
+    <link rel="stylesheet" href="css/estiloBusquedaSimple.css">
     <script>
         function getAllBooks(funcion) {
             fetch(funcion) // Cambia la URL si es necesario
@@ -54,8 +54,10 @@
             }
         }
 
-
+        // Cargar todos los libros inicialmente
         getAllBooks('http://localhost:8080/api/books');
+
+        // Cargar la toolbar desde un archivo HTML
         fetch('toolbar.html')
             .then(response => response.text())
             .then(data => {
@@ -63,24 +65,24 @@
             });
     </script>
 </head>
-<body style="margin: 0; background-color: white; color: black;">
+<body>
 <div id="toolbar"></div>
 
-<div style="padding-left: calc(50% - 400px);">
+<div class="container">
     <h1>Búsqueda Simple de Libros</h1>
 
     <!-- Formulario de búsqueda -->
     <form onsubmit="event.preventDefault(); buscarLibrosIndicados();">
         <div>
-            Cadena Buscada:&nbsp;&nbsp;
-            <input type="text" id="titulo_autor" placeholder="Ingrese el titulo o autor a buscar">
+            <label for="titulo_autor">Cadena Buscada:</label>
+            <input type="text" id="titulo_autor" placeholder="Ingrese el título o autor a buscar">
         </div>
 
         <input type="submit" value="Buscar">
     </form>
 
     <!-- Tabla de resultados -->
-    <table border="1" style="width: 100%; margin-top: 20px;">
+    <table>
         <thead>
         <tr>
             <th>Título</th>
