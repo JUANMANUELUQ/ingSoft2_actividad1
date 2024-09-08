@@ -42,7 +42,7 @@
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
             if (id != null) {
-                fetch('http://localhost:8080/api/books/${encodeURIComponent(id)}') // Cambia la URL si es necesario
+                fetch(`http://localhost:8080/api/books/${encodeURIComponent(id)}`) // Cambia la URL si es necesario
             .then(response => response.json())
                     .then(data => {
                         document.getElementById("book-title").value = data.title;
