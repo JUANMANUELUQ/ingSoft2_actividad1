@@ -2,12 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
     <script>
-      location.assign('busquedaSimple.html');
+        // Redirige automáticamente a la página de búsqueda simple al cargar la página
+        window.onload = function() {
+            window.location.href = 'busquedaSimple.html';
+        };
     </script>
 </head>
 <body>
-
+<!-- Mensaje por si la redirección tarda en ejecutarse -->
+<p>Redirigiendo a la página de búsqueda...</p>
 </body>
 </html>

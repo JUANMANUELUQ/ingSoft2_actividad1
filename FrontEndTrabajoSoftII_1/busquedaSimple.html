@@ -2,47 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>B&uacute;squeda simple</title>
+    <title>Búsqueda simple</title>
     <link rel="stylesheet" href="css/estiloBusquedas.css">
     <script>
-        // Cargar archivo HTML mediante JavaScript y AJAX
+        // Cargar archivo HTML mediante JavaScript y AJAX (para incluir la toolbar)
         fetch('toolbar.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('toolbar').innerHTML = data;
             });
+
+        // Función para realizar la búsqueda simple por autor o título
+        function buscarLibro() {
+            const searchCad = document.getElementById("searchCad").value;
+
+
+            // Realizar la solicitud al backend
+            fetch(`http://localhost:8080/api/books/search?keyword=${searchCad }`)
+                .then(response => response.json())
+                .then(data => {
+                    let resultados = document.getElementById("resultados");
+                    resultados.innerHTML = ''; // Limpiar resultados anteriores
+                    data.forEach(book => {
+                        resultados.innerHTML += `
+                            <tr>
+                                <td>${book.title}</td>
+                                <td>${book.author}</td>
+                                <td>${book.isbn}</td>
+                                <td><button onclick="verDetalles('${book.id}')">Ver Detalles</button></td>
+                            </tr>`;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error en la búsqueda:', error);
+                });
+        }
+
+        // Función para ver detalles de un libro (se puede implementar más adelante)
+        function verDetalles(bookId) {
+            alert("Detalles del libro con ID: " + bookId);
+        }
     </script>
 </head>
-<body style="margin: 0;background-color:white;color:white ">
-    <div id="toolbar"></div>
-    <div style="padding-left:calc(50% - 400px);">
-        <form>
-            <div>
-                Autor:&nbsp;&nbsp;
-                <input type="text" name=""  placeholder="Autor a buscar">
-            </div>
-            <div>
-                T&iacute;tulo:&nbsp;&nbsp;
-                <input type="text" name="" placeholder="T&iacute;tulo a buscar">
-            </div>
-            <input type="button" name="Buscar" value="Buscar">
-        </form>
-        <table>
-            <tr>
-                <th>
-                    T&iacute;tulo
-                </th>
-                <th>
-                    Autor
-                </th>
-                <th>
-                    ISBN
-                </th>
-                <th>
-                    Acci&oacute;n
-                </th>
-            </tr>
-        </table>
-    </div>
+<body style="margin: 0; background-color: white; color: black;">
+<div id="toolbar"></div>
+
+<div style="padding-left: calc(50% - 400px);">
+    <h1>Búsqueda Simple de Libros</h1>
+
+    <!-- Formulario de búsqueda -->
+    <form onsubmit="event.preventDefault(); buscarLibro();">
+        <div>
+            Cadena Buscada:&nbsp;&nbsp;
+            <input type="text" id="searchCad" placeholder="Ingrese el titulo o autor a buscar">
+        </div>
+
+        <input type="submit" value="Buscar">
+    </form>
+
+    <!-- Tabla de resultados -->
+    <table border="1" style="width: 100%; margin-top: 20px;">
+        <thead>
+        <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>ISBN</th>
+            <th>Acción</th>
+        </tr>
+        </thead>
+        <tbody id="resultados">
+        <!-- Los resultados de búsqueda aparecerán aquí -->
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

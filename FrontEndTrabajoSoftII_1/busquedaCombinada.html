@@ -2,51 +2,118 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>B&uacute;squeda combinada</title>
+    <title>Búsqueda combinada</title>
     <link rel="stylesheet" href="css/estiloBusquedas.css">
     <script>
-        // Cargar archivo HTML mediante JavaScript y AJAX
+        // Cargar archivo HTML mediante JavaScript y AJAX (para incluir la toolbar)
         fetch('toolbar.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('toolbar').innerHTML = data;
             });
+
+        // Función para buscar libros combinados (por autor, título e ISBN)
+        function buscarLibroCombinado() {
+            const autor = document.getElementById("autor").value || '';
+            const titulo = document.getElementById("titulo").value || '';
+            const isbn = document.getElementById("isbn").value || '';
+
+            if (!titulo && !autor && !isbn) {
+                alert('Debes llenar al menos uno de los campos.');
+                return;
+            }
+
+            // Construir URL solo con los parámetros que no están vacíos
+            let url = 'http://localhost:8080/api/books/search/advanced?';
+            const params = [];
+
+            if (titulo) {
+                params.push(`title=${encodeURIComponent(titulo)}`);
+            }
+            if (autor) {
+                params.push(`author=${encodeURIComponent(autor)}`);
+            }
+            if (isbn) {
+                params.push(`isbn=${encodeURIComponent(isbn)}`);
+            }
+
+            // Unir los parámetros con "&"
+            url += params.join('&');
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error en la solicitud: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let resultados = document.getElementById("resultados");
+                    resultados.innerHTML = ''; // Limpiar resultados anteriores
+
+                    if (Array.isArray(data)) {
+                        data.forEach(book => {
+                            resultados.innerHTML += `
+                        <tr>
+                            <td>${book.title}</td>
+                            <td>${book.author}</td>
+                            <td>${book.isbn}</td>
+                            <td><button onclick="verDetalles('${book.id}')">Ver Detalles</button></td>
+                        </tr>`;
+                        });
+                    } else {
+                        console.log('Error: la respuesta no es una lista.');
+                    }
+                })
+                .catch(error => {
+                    console.log('Error en la búsqueda combinada:', error);
+                });
+        }
+
+        // Función para mostrar detalles de un libro (se puede implementar más adelante)
+        function verDetalles(bookId) {
+            alert("Detalles del libro con ID: " + bookId);
+        }
     </script>
 </head>
-<body style="margin: 0;background-color:white;color:white ">
+<body style="margin: 0; background-color: white; color: black;">
 <div id="toolbar"></div>
-<div style="padding-left:calc(50% - 400px);">
-    <form>
+
+<div style="padding-left: calc(50% - 400px);">
+    <h1>Búsqueda Combinada de Libros</h1>
+
+    <!-- Formulario de búsqueda -->
+    <form onsubmit="event.preventDefault(); buscarLibroCombinado();">
         <div>
             Autor:&nbsp;&nbsp;
-            <input type="text" name=""  placeholder="Autor a buscar">
+            <input type="text" id="autor" placeholder="Autor a buscar">
         </div>
         <div>
-            T&iacute;tulo:&nbsp;&nbsp;
-            <input type="text" name="" placeholder="T&iacute;tulo a buscar">
+            Título:&nbsp;&nbsp;
+            <input type="text" id="titulo" placeholder="Título a buscar">
         </div>
         <div>
             ISBN:&nbsp;&nbsp;
-            <input type="text" name="" placeholder="ISBN a buscar">
+            <input type="text" id="isbn" placeholder="ISBN a buscar">
         </div>
-        <input type="button" name="Buscar" value="Buscar">
+        <input type="submit" value="Buscar">
     </form>
-    <table>
+
+    <!-- Tabla de resultados -->
+    <table border="1" style="width: 100%; margin-top: 20px;">
+        <thead>
         <tr>
-            <th>
-                T&iacute;tulo
-            </th>
-            <th>
-                Autor
-            </th>
-            <th>
-                ISBN
-            </th>
-            <th>
-                Acci&oacute;n
-            </th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>ISBN</th>
+            <th>Acción</th>
         </tr>
+        </thead>
+        <tbody id="resultados">
+        <!-- Los resultados de búsqueda aparecerán aquí -->
+        </tbody>
     </table>
 </div>
+
 </body>
 </html>
